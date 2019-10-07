@@ -3,9 +3,17 @@ import Equation
 
 if(len(sys.argv) == 1):
     print('il manque un argument')
-elif(len(sys.argv) != 2):
-    print('usage: computorv1 [equation]')
+elif(len(sys.argv) > 3):
+    print('usage: computorv1 [equation] [-f]')
 else:
+    seeFraction = False
+    if(len(sys.argv) == 3 and sys.argv[2] != "-f"):
+        print("computorv1: illegal option " + sys.argv[2])
+        print('usage: computorv1 [equation] [-f]')
+        print('-f : see solution with fractional format')
+        sys.exit(1)
+    if "-f" in sys.argv:
+        seeFraction = True
     equa = sys.argv[1]
     result = Equation.Equation(equa)
     try:
@@ -19,5 +27,5 @@ else:
     #    print("The polynomial degree is stricly greater than 2, I can't solve")
      #   sys.exit(1)
     result.solve()
-    print (result.displaySoluce())
+    print (result.displaySoluce(seeFraction))
 

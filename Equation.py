@@ -58,7 +58,7 @@ class Equation:
     def solve(self):
         self.solver.findEquaDegres()
         self.solver.calculEqua()
-        
+
     def getDegresValue(self,equa, pattern, coeff):
         if(equa.find(pattern) > -1 ):
             nb = equa.split('*')
@@ -77,15 +77,15 @@ class Equation:
         if( a != -1):
                 return True
         return False
-    
+
     def thereIsX(self,equa):
         a = equa.find('X') 
         if( a != -1):
                 return True
         return False
 
-    def displaySoluce(self):
-        return self.solver.display()
+    def displaySoluce(self, seeFraction = False):
+        return self.solver.display(seeFraction)
 
     def getDegres0(self):
         return  self.degres0
@@ -111,6 +111,3 @@ class Equation:
                     lexeme = '' 
         result.append(lexeme.replace(" ", ""))
         return result
-    
-    
-    
