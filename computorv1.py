@@ -13,11 +13,11 @@ else:
     except:
         print('syntax error')
         sys.exit(1)
-    try:
-        result.calculateDegreValue()
-    except:
-        print("The polynomial degree is stricly greater than 2, I can't solve")
-        sys.exit(1)
+   # try:
+    result.calculateDegreValue()
+   # except:
+    #    print("The polynomial degree is stricly greater than 2, I can't solve")
+     #   sys.exit(1)
     result.solve()
     print (result.displaySoluce())
 

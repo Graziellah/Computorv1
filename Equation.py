@@ -11,7 +11,7 @@ class Equation:
         self.degres0= 0
         self.degres1= 0
         self.degres2= 0
-        self.solver = 0
+        self.solver = None
 
     def getEquation(self):
         return self.equation
@@ -38,10 +38,12 @@ class Equation:
 
     def sortAllValue(self,equa, coeff):
         for equa in equa:
-            if(self.thereIsX(equa)):
+            if(self.thereIsXPower(equa)):
                 self.degres0 += self.getDegresValue(equa, 'X^0', coeff)
                 self.degres1 += self.getDegresValue(equa, 'X^1', coeff)
                 self.degres2 += self.getDegresValue(equa, 'X^2', coeff)
+            elif(self.thereIsX(equa)):
+                self.degres1 += self.getDegresValue(equa, 'X', coeff)
             else:
                 self.degres0 += atof(equa)
 
@@ -58,13 +60,24 @@ class Equation:
         self.solver.calculEqua()
         
     def getDegresValue(self,equa, pattern, coeff):
-        if(equa.find(pattern) > 0 and (pattern == 'X^0' or pattern == 'X^1' or pattern == 'X^2')):
-             nb = equa.split('*')
-             return atof(nb[0]) * coeff
-        elif(equa.find('X^') > 0):
-            raise ValueError("The polynomial degree is stricly greater than 2,\n I can't solve" + equa)
-        return 0
+        if(equa.find(pattern) > -1 ):
+            nb = equa.split('*')
+            if(len(nb) == 1):
+                if(nb[0][0] == "-"):
+                    return -1 * coeff
+                else:
+                    return coeff
+            else:
+                return atof(nb[0]) * coeff
+        else:
+            return 0
 
+    def thereIsXPower(self,equa):
+        a = equa.find('X^') 
+        if( a != -1):
+                return True
+        return False
+    
     def thereIsX(self,equa):
         a = equa.find('X') 
         if( a != -1):

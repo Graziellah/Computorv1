@@ -27,6 +27,7 @@ class Solver:
         return self.soluce
 
     def findEquaDegres(self):
+        print(self.degres2, self.degres1, self.degres0)
         if((self.degres2 != 0) and (self.equaDegres == 0)):
             self.equaDegres = 2
         elif((self.degres1 != 0) and (self.equaDegres == 0)):
