@@ -47,7 +47,10 @@ pip install -r requirements.txt
 
 ```text
 Usage:
-  python computorv1.py <equation>
+  python computorv1.py <equation> [-f]
+  
+Options:
+  -f   Show solution with fractional format
 ```
 
 ### From interface
