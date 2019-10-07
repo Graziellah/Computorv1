@@ -2,6 +2,8 @@
 
 Polynomial Equation Solver
 
+[instructions](computorv1.fr.pdf)
+
 ## Table of Contents
 
 * [Prerequisites](#prerequisites)
