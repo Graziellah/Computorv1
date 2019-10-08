@@ -1,25 +1,11 @@
 from __future__ import division
 
 class Solver:
-    def __init__(self, degres0 = 0, degres1 = 0, degres2 = 0):
-        self.degres0 = degres0
-        self.degres1 = degres1
-        self.degres2 = degres2
+    def __init__(self, equa):
+        self.equa = equa
         self.equaDegres = 0
         self.soluce = []
         self.delta = 0
-    def getDegres0(self):
-        return  self.degres0
-
-    def getDegres1(self):
-        return  self.degres1
-
-    def getDegres2(self):
-        return  self.degres2
-
-    def getEquaDegre(self):
-        return  self.equaDegres
-
     def setEquaDegre(self, nb):
         return  self.equaDegres
         
@@ -27,47 +13,44 @@ class Solver:
         return self.soluce
 
     def findEquaDegres(self):
-        if((self.degres2 != 0) and (self.equaDegres == 0)):
-            self.equaDegres = 2
-        elif((self.degres1 != 0) and (self.equaDegres == 0)):
-            self.equaDegres = 1
-        elif((self.degres0 != 0) and (self.equaDegres == 0)):
-            self.equaDegres = 0
-        else:
-            self.equaDegres = -1
+        nb = 0
+        for key in self.equa.keys():
+            if nb < key:
+                nb = key
+        self.equaDegres = nb
 
     def calculEqua(self):
-        if(self.equaDegres == 2):
-            self.solveSecondDegreEqua()
-        if(self.equaDegres == 1):
-            self.solveFirstDegreEqua()
         if(self.equaDegres == 0):
             self.soluce = []
-        if(self.equaDegres == -1):
+        elif(self.equaDegres == 1):
+            self.solveFirstDegreEqua()
+        elif(self.equaDegres == 2):
+            self.solveSecondDegreEqua()
+        elif(self.equaDegres == -1):
             self.soluce = [0]
 
     def solveFirstDegreEqua(self):
-        self.soluce.append((self.degres0 * (-1)) / self.degres1)
+        self.soluce.append((self.equa[0] * (-1)) / self.equa[1])
     
     def solveSecondDegreEqua(self):
-        carre = self.degres1**2
-        ac = 4 * self.degres0 * self.degres2
+        carre = self.equa[1]**2
+        ac = 4 * self.equa[0] * self.equa[2]
         self.delta = carre - ac
         if ( self.delta < 0):
             self.soluce = []
         elif( self.delta == 0):
-            b = ( -1 * self.degres1)
-            a2= (2 * self.degres2)
+            b = ( -1 * self.equa[1])
+            a2= (2 * self.equa[2])
             self.soluce.append(float( b / a2))
         else:
             racineDelta = self.delta**(0.5)
-            x1 = (((self.degres1 * -1) - racineDelta) /( 2 * self.degres2))
-            x2 = (((self.degres1 * -1) + racineDelta) /( 2 * self.degres2))
+            x1 = (((self.equa[1] * -1) - racineDelta) /( 2 * self.equa[2]))
+            x2 = (((self.equa[1] * -1) + racineDelta) /( 2 * self.equa[2]))
             self.soluce.append(x1)
             self.soluce.append(x2)
 
     def conditionalDisplay(self, valueToDisplay, testedValue):
-        return valueToDisplay if testedValue != 0 else ''
+        return valueToDisplay if testedValue >  0 else " "
 
     def power(self,nb, powerval):
         if (powerval < 0):
@@ -93,33 +76,48 @@ class Solver:
         fraction = str(int(numerator/ gcd)) +  "/" + str(int(denominator/gcd))
         return fraction
 
-    def display(self, seeFraction):
-        finalEqua= 'Reduced form: '
-        if(self.degres0 != 0 or self.degres1 != 0 or self.degres2 != 0):
-            if(self.degres0 != 0 ):
-                finalEqua = finalEqua + str(int(self.degres0)) + self.conditionalDisplay(" + ", self.degres1)
-            if(self.degres1 != 0):
-                finalEqua = finalEqua +  str(int(self.degres1)) + 'X' +  self.conditionalDisplay(" + ", self.degres2)
-            if (self.degres2 != 0): 
-                finalEqua = finalEqua + str(self.degres2) + 'X^2'
-            finalEqua = finalEqua +  ' = 0 \n'
-            finalEqua = finalEqua + 'Polynomial degree: '
-            finalEqua = finalEqua + str(self.equaDegres) + '\n'
-            finalEqua = finalEqua +  "<| = b^2 - 4ac = " +  str(round(self.delta, 6)) + '\n'
-            if(len(self.soluce ) == 2):
-                finalEqua = finalEqua + 'Discriminant is strictly positive, the two solutions are:\n' 
-                if (seeFraction):
-                    finalEqua = finalEqua + str(self.fraction(round(self.soluce[0], 6)))+ '\n' +str(self.fraction(round(self.soluce[1], 6))) + '\n'
-                else: 
-                    finalEqua = finalEqua + str(round(self.soluce[0], 6))+ '\n' +str(round(self.soluce[1], 6)) + '\n'
-            elif(len(self.soluce) == 1):
-                finalEqua = finalEqua +'The solution is:\n' 
-                if(seeFraction):
-                    finalEqua = finalEqua + str(self.fraction(round(self.soluce[0],6)))
-                else:
-                    finalEqua = finalEqua + str(round(self.soluce[0],6))
-            else:
-                finalEqua = finalEqua + "The polynomial degree is stricly greater than 2, I can't solve.\n"
+    def displayPower(self, key):
+        if key == 0:
+            return ""
+        elif key == 1:
+            return "X"
         else:
-            finalEqua = 'Reduced form: 0 = 0 \nPolynomial degree: 0\n<| = b^2 - 4ac = 0 \nThe solution is: \n0'
-        return finalEqua
+            return "X^"+ str(key)
+
+    def displayReducedForm(self):
+        reducedForm = 'Reduced form: '
+        sign = ""
+        for key in self.equa.keys():
+            if self.equa[key] != 0:
+                reducedForm = reducedForm + self.conditionalDisplay(sign , self.equa[key]) + str(int(self.equa[key])) + self.displayPower(key) 
+                sign = " + "
+        print (reducedForm + " = 0")
+
+    def displayPolynomialDegres(self):
+        print ("Polynomial degree: " + str(self.equaDegres))
+
+    def displayDiscriminant(self):
+        if self.equaDegres < 3:
+            print( "<| = b^2 - 4ac = " +  str(round(self.delta, 6)))
+
+    def displaySolution(self, seeFraction):
+        for soluce in self.soluce:
+            if seeFraction :
+                print(str(self.fraction(round(self.soluce, 5))))
+            else:
+                print (str(round(soluce, 6)))
+
+    def displaySolutionIntro(self):
+        if self.equaDegres > 2:
+            print ( "The polynomial degree is stricly greater than 2, I can't solve.")
+        if len(self.soluce ) == 2:
+            print('Discriminant is strictly positive, the two solutions are:')
+        elif len(self.soluce) == 1:
+            print('The solution is:')
+    
+    def display(self, seeFraction):
+        self.displayReducedForm()
+        self.displayPolynomialDegres()
+        self.displayDiscriminant()
+        self.displaySolutionIntro()
+        self.displaySolution(seeFraction)

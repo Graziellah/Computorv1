@@ -8,11 +8,9 @@ class Equation:
         self.equation = equation
         self.rightPart = ''
         self.leftPart = ''
-        self.degres0= 0
-        self.degres1= 0
-        self.degres2= 0
         self.solver = None
-
+        self.equaDetail = {}
+    
     def getEquation(self):
         return self.equation
  
@@ -30,22 +28,35 @@ class Equation:
         self.leftPart = self.lexerParseur(splittedEqu[0])
         self.rightPart = self.lexerParseur(splittedEqu[1])
 
-    def getRightPart(self):
-        return self.rightPart
-
-    def getLeftPart(self):
-        return self.leftPart
-
     def sortAllValue(self,equa, coeff):
         for equa in equa:
-            if(self.thereIsXPower(equa)):
-                self.degres0 += self.getDegresValue(equa, 'X^0', coeff)
-                self.degres1 += self.getDegresValue(equa, 'X^1', coeff)
-                self.degres2 += self.getDegresValue(equa, 'X^2', coeff)
-            elif(self.thereIsX(equa)):
-                self.degres1 += self.getDegresValue(equa, 'X', coeff)
+            powerValue = int(self.getPowerValue(equa))
+            oldValue = self.equaDetail[powerValue] if powerValue in self.equaDetail.keys() else 0
+            self.equaDetail[powerValue] = self.getValue(equa, coeff) + oldValue
+    
+    def getValue(self, equa, coeff):
+        nb = 0
+        if(equa.find("*") > -1):
+            nb = equa.split('*')
+        else:
+            nb = equa
+        if(len(nb) == 1):
+            if(nb[0][0] == "-"):
+                return -1 * coeff
             else:
-                self.degres0 += atof(equa)
+                return coeff
+        else:
+            return atof(nb[0]) * coeff
+
+    def getPowerValue(self, equa):
+        if(self.thereIsXPower(equa)):
+            value = equa.index("X^")
+            if(equa[value + 2]):
+                return equa[value + 2]
+        elif(self.thereIsX(equa)):
+            return 1
+        else:
+            return 0
 
     def calculateDegreValue(self):
         self.sortAllValue(self.leftPart, 1)
@@ -53,7 +64,7 @@ class Equation:
         self.instanciateSolver()
 
     def instanciateSolver(self):
-        self.solver = Solver.Solver(self.degres0, self.degres1, self.degres2)
+        self.solver = Solver.Solver(self.equaDetail)
 
     def solve(self):
         self.solver.findEquaDegres()
@@ -86,15 +97,6 @@ class Equation:
 
     def displaySoluce(self, seeFraction = False):
         return self.solver.display(seeFraction)
-
-    def getDegres0(self):
-        return  self.degres0
-
-    def getDegres1(self):
-        return  self.degres1
-
-    def getDegres2(self):
-        return  self.degres2
 
     def lexerParseur(self, equa):
         result = []
