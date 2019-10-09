@@ -27,12 +27,13 @@ class Solver:
         elif(self.equaDegres == 2):
             self.solveSecondDegreEqua()
         elif(self.equaDegres == -1):
-            self.soluce = [0]
+            self.soluce = []
 
     def solveFirstDegreEqua(self):
         self.soluce.append((self.equa[0] * (-1)) / self.equa[1])
     
     def solveSecondDegreEqua(self):
+        print( self.equa)
         carre = self.equa[1]**2
         ac = 4 * self.equa[0] * self.equa[2]
         self.delta = carre - ac
@@ -91,33 +92,40 @@ class Solver:
             if self.equa[key] != 0:
                 reducedForm = reducedForm + self.conditionalDisplay(sign , self.equa[key]) + str(int(self.equa[key])) + self.displayPower(key) 
                 sign = " + "
-        print (reducedForm + " = 0")
+        return reducedForm + " = 0\n"
 
     def displayPolynomialDegres(self):
-        print ("Polynomial degree: " + str(self.equaDegres))
+        return "Polynomial degree: " + str(self.equaDegres) + "\n"
 
     def displayDiscriminant(self):
         if self.equaDegres < 3:
-            print( "<| = b^2 - 4ac = " +  str(round(self.delta, 6)))
+            return "<| = b^2 - 4ac = " +  str(round(self.delta, 6)) + "\n"
 
     def displaySolution(self, seeFraction):
+        solutions = ""
         for soluce in self.soluce:
+            solutions = solutions + "\n"
             if seeFraction :
-                print(str(self.fraction(round(self.soluce, 5))))
+                solutions = solution +  str(self.fraction(round(self.soluce, 5)))  
             else:
-                print (str(round(soluce, 6)))
+                solutions = solutions + str(round(soluce, 6))
+        return solutions
 
     def displaySolutionIntro(self):
         if self.equaDegres > 2:
-            print ( "The polynomial degree is stricly greater than 2, I can't solve.")
+            return "The polynomial degree is stricly greater than 2, I can't solve.\n"
         if len(self.soluce ) == 2:
-            print('Discriminant is strictly positive, the two solutions are:')
+            return'Discriminant is strictly positive, the two solutions are:'
         elif len(self.soluce) == 1:
-            print('The solution is:')
+            return'The solution is:'
+        elif self.delta < 0 :
+            return "The polynomial equation has no solution in R"
     
     def display(self, seeFraction):
-        self.displayReducedForm()
-        self.displayPolynomialDegres()
-        self.displayDiscriminant()
-        self.displaySolutionIntro()
-        self.displaySolution(seeFraction)
+        finalDisplay = ""
+        finalDisplay = finalDisplay + self.displayReducedForm()
+        finalDisplay = finalDisplay + self.displayPolynomialDegres()
+        finalDisplay = finalDisplay + self.displayDiscriminant()
+        finalDisplay = finalDisplay + self.displaySolutionIntro()
+        finalDisplay = finalDisplay + self.displaySolution(seeFraction)
+        return finalDisplay

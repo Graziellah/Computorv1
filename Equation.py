@@ -38,15 +38,20 @@ class Equation:
         nb = 0
         if(equa.find("*") > -1):
             nb = equa.split('*')
-        else:
-            nb = equa
-        if(len(nb) == 1):
-            if(nb[0][0] == "-"):
-                return -1 * coeff
+            if(len(nb) == 1):
+                if(nb[0][0] == "-"):
+                    return -1 * coeff
+                else:
+                    return coeff
             else:
-                return coeff
+                return atof(nb[0]) * coeff
         else:
-            return atof(nb[0]) * coeff
+            if(self.thereIsX(equa)):
+                if(equa[0][0] == "-"):
+                    return -1 * coeff
+                else:
+                    return coeff
+            return atof(equa) * coeff
 
     def getPowerValue(self, equa):
         if(self.thereIsXPower(equa)):
