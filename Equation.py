@@ -18,6 +18,7 @@ class Equation:
         p = re.search('[^0-9X=\^\+\-\s*.]', self.equation)
         if p != None:
             raise  SyntaxError( 'Syntax Error ' + p.group())
+        
     def split(self):
         try:
             self.checkValidityFormat()
@@ -65,11 +66,26 @@ class Equation:
     def initEquaDetails(self):
         for i in range(0, 3):
             self.equaDetail[i] = 0
-    
+
+    def checkEquationValidity(self):
+        count = 0
+        zeroDegreeCount = 0
+        for data in self.equaDetail:
+            if data != 0:
+               count +=  self.equaDetail[data]
+            else:
+                zeroDegreeCount = self.equaDetail[data]
+        if count == 0 and zeroDegreeCount != 0:
+            raise ValueError("No solution")
+
     def calculateDegreValue(self):
         self.initEquaDetails()
         self.sortAllValue(self.leftPart, 1)
         self.sortAllValue(self.rightPart, -1)
+        try:
+            self.checkEquationValidity()
+        except ValueError as err:
+            raise err
         self.instanciateSolver()
 
     def instanciateSolver(self):

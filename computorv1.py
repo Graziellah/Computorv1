@@ -21,7 +21,11 @@ else:
     except SyntaxError as err:
         print( err)
         sys.exit(1)
-    result.calculateDegreValue()
+    try:
+        result.calculateDegreValue()
+    except ValueError as err:
+        print(err)
+        sys.exit(1)
     result.solve()
     print (result.displaySoluce(seeFraction))
 
