@@ -18,14 +18,10 @@ else:
     result = Equation.Equation(equa)
     try:
         result.split()
-    except:
-        print('syntax error')
+    except SyntaxError as err:
+        print( err)
         sys.exit(1)
-   # try:
     result.calculateDegreValue()
-   # except:
-    #    print("The polynomial degree is stricly greater than 2, I can't solve")
-     #   sys.exit(1)
     result.solve()
     print (result.displaySoluce(seeFraction))
 
