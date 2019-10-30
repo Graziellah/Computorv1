@@ -8,19 +8,17 @@ class Equation:
         self.equation = equation
         self.rightPart = ''
         self.leftPart = ''
-        self.degres0= 0
-        self.degres1= 0
-        self.degres2= 0
         self.solver = None
-
+        self.equaDetail = {}
+    
     def getEquation(self):
         return self.equation
  
     def checkValidityFormat(self):
         p = re.search('[^0-9X=\^\+\-\s*.]', self.equation)
-        if( p != None):
-            raise  SyntaxError( 'Syntax Error ' + self.equation)       
-
+        if p != None:
+            raise  SyntaxError( 'Syntax Error ' + p.group())
+        
     def split(self):
         try:
             self.checkValidityFormat()
@@ -30,40 +28,78 @@ class Equation:
         self.leftPart = self.lexerParseur(splittedEqu[0])
         self.rightPart = self.lexerParseur(splittedEqu[1])
 
-    def getRightPart(self):
-        return self.rightPart
-
-    def getLeftPart(self):
-        return self.leftPart
-
     def sortAllValue(self,equa, coeff):
         for equa in equa:
-            if(self.thereIsXPower(equa)):
-                self.degres0 += self.getDegresValue(equa, 'X^0', coeff)
-                self.degres1 += self.getDegresValue(equa, 'X^1', coeff)
-                self.degres2 += self.getDegresValue(equa, 'X^2', coeff)
-            elif(self.thereIsX(equa)):
-                self.degres1 += self.getDegresValue(equa, 'X', coeff)
+            powerValue = int(self.getPowerValue(equa))
+            oldValue = self.equaDetail[powerValue] if powerValue in self.equaDetail.keys() else 0
+            self.equaDetail[powerValue] = self.getValue(equa, coeff) + oldValue
+    
+    def getValue(self, equa, coeff):
+        nb = 0
+        if equa.find("*") > -1:
+            nb = equa.split('*')
+            if len(nb) == 1:
+                if nb[0][0] == "-":
+                    return -1 * coeff
+                else:
+                    return coeff
             else:
-                self.degres0 += atof(equa)
+                return atof(nb[0]) * coeff
+        else:
+            if self.thereIsX(equa):
+                if equa[0][0] == "-" :
+                    return -1 * coeff
+                else:
+                    return coeff
+            return atof(equa) * coeff
+
+    def getPowerValue(self, equa):
+        if self.thereIsXPower(equa):
+            value = equa.index("X^")
+            if equa[value + 2]:
+                return equa[value + 2]
+        elif self.thereIsX(equa):
+            return 1
+        else:
+            return 0
+
+    def initEquaDetails(self):
+        for i in range(0, 3):
+            self.equaDetail[i] = 0
+
+    def checkEquationValidity(self):
+        count = 0
+        zeroDegreeCount = 0
+        for data in self.equaDetail:
+            if data != 0:
+               count +=  self.equaDetail[data]
+            else:
+                zeroDegreeCount = self.equaDetail[data]
+        if count == 0 and zeroDegreeCount != 0:
+            raise ValueError("No solution")
 
     def calculateDegreValue(self):
+        self.initEquaDetails()
         self.sortAllValue(self.leftPart, 1)
         self.sortAllValue(self.rightPart, -1)
+        try:
+            self.checkEquationValidity()
+        except ValueError as err:
+            raise err
         self.instanciateSolver()
 
     def instanciateSolver(self):
-        self.solver = Solver.Solver(self.degres0, self.degres1, self.degres2)
+        self.solver = Solver.Solver(self.equaDetail)
 
     def solve(self):
         self.solver.findEquaDegres()
         self.solver.calculEqua()
 
     def getDegresValue(self,equa, pattern, coeff):
-        if(equa.find(pattern) > -1 ):
+        if equa.find(pattern) > -1:
             nb = equa.split('*')
-            if(len(nb) == 1):
-                if(nb[0][0] == "-"):
+            if len(nb) == 1:
+                if nb[0][0] == "-":
                     return -1 * coeff
                 else:
                     return coeff
@@ -74,27 +110,18 @@ class Equation:
 
     def thereIsXPower(self,equa):
         a = equa.find('X^') 
-        if( a != -1):
+        if a != -1:
                 return True
         return False
 
     def thereIsX(self,equa):
         a = equa.find('X') 
-        if( a != -1):
+        if a != -1:
                 return True
         return False
 
     def displaySoluce(self, seeFraction = False):
         return self.solver.display(seeFraction)
-
-    def getDegres0(self):
-        return  self.degres0
-
-    def getDegres1(self):
-        return  self.degres1
-
-    def getDegres2(self):
-        return  self.degres2
 
     def lexerParseur(self, equa):
         result = []
@@ -104,7 +131,7 @@ class Equation:
         for i,char in enumerate(equa):
             if char != plus or char != moins:
                 lexeme += char 
-            if (i+1 < len(equa)): 
+            if i+1 < len(equa):
                 if equa[i+1] == plus or equa[i+1] == moins: 
                     if lexeme != '' or lexeme != ' ':
                         result.append(lexeme.replace(" ", ""))

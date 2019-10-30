@@ -10,7 +10,7 @@ class MyApp():
         self.window.minsize(480, 360)
         frame = Frame(self.window, bg='#048B9A')
         self.window.config(background='#048B9A')
-        title_label = Label(frame,text='Solve polynomial equation', font=('Courier', 30), bg='#048B9A', fg='white')
+        title_label = Label(frame,text='Polynomial equation solver', font=('Courier', 30), bg='#048B9A', fg='white')
         title_label.pack(pady=30)
         self.yt_input = Entry(frame, font=('Courier', 30), fg='#048B9A', bg='white', width='30')
         self.yt_input.pack(pady=30)
