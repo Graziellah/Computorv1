@@ -106,7 +106,7 @@ class Solver:
         for soluce in self.soluce:
             solutions = solutions + "\n"
             if seeFraction :
-                solutions = solution +  str(self.fraction(round(self.soluce, 5)))  
+                solutions = solutions +  str(self.fraction(round(soluce, 5)))  
             else:
                 solutions = solutions + str(round(soluce, 6))
         return solutions
